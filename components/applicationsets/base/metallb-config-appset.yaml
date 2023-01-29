@@ -2,16 +2,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: intree-api
+  name: metallb-config
   namespace: argocd
   annotations:
     intreeapp.com/envgroup: nonprod
 spec:
   generators:
-    - tobefilled
+    - clusters: {}
   template:
     metadata:
-      name: '{{name}}-intree-api'
+      name: '{{name}}-metallb-config'
     spec:
       project: '{{name}}'
       syncPolicy:
@@ -28,9 +28,9 @@ spec:
           prune: true
           selfHeal: true
       source:
-        repoURL: git@github.com:Intreecom/ArgoCD.git
-        targetRevision: '{{values.revision}}'
-        path: apps/manifests/intree-api/overlays/{{name}}
+        repoURL: https://github.com/Workquark/kind-argocd.git
+        targetRevision: master
+        path: apps/manifests/metallb/overlays/{{name}}
       destination:
         server: '{{server}}'
-        namespace: intree-api
+        namespace: metallb-config

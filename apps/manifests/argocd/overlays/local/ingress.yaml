@@ -6,8 +6,9 @@ metadata:
   name: argocd-server
   namespace: argocd
   annotations:
-    # nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    # nginx.ingress.kubernetes.io/ssl-redirect: "true"    
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"    
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true" # not required for cloud
     # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     # external-dns.alpha.kubernetes.io/hostname: argocd.nonprod.intreeapp.xyz              
     ingress.kubernetes.io/rewrite-target: /

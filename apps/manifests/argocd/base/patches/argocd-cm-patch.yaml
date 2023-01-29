@@ -4,4 +4,4 @@ metadata:
   name: argocd-cm
 data:
   application.resourceTrackingMethod: annotation+label
-  server.insecure: "true"
+  # server.insecure: "true"

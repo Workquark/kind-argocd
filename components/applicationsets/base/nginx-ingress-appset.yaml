@@ -1,0 +1,68 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: ingress-nginx
+  namespace: argocd
+  # labels:
+  #   env: all
+  # finalizers:
+  #   - resources-finalizer.argocd.argoproj.io
+spec:
+  generators:
+  - clusters: {}         
+  template:
+    metadata:
+      name: '{{name}}-ingress-nginx'
+    spec:
+      project: '{{name}}'
+      destination:
+        server: '{{server}}'
+        namespace: ingress-nginx
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+          - FailOnSharedResource=true
+        automated:
+          prune: true
+          selfHeal: true
+      source:
+        chart: ingress-nginx
+        repoURL: https://kubernetes.github.io/ingress-nginx
+        targetRevision: 4.4.2
+        helm:
+          releaseName: ingress-nginx
+          values: |-
+            controller:
+              replicaCount: 3
+              podAnnotations:
+                linkerd.io/inject: enabled  
+              service:
+                externalTrafficPolicy: "Local"
+                annotations: 
+                  # service.beta.kubernetes.io/aws-load-balancer-type: nlb
+                  # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:eu-west-1:182614455229:certificate/e22a5924-412e-4532-86e1-80781aed7809                  
+                  # service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+                  # service.beta.kubernetes.io/aws-load-balancer-ip-address-type: ipv4
+                  # service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http                 
+                  # service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"      
+                  # service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*" # this is important
+                  # service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+                  # service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "Name={{name}}-ingress-nlb,Environment={{name}}"
+                  # service.beta.kubernetes.io/aws-load-balancer-target-node-labels: talos-microstack/worker=worker
+                # targetPorts:
+                #   http: http
+                #   https: tohttps
+              # containerPort:
+              #   http: 80
+              #   https: 443
+              #   # tohttps: 2443
+              # config:
+              #   ssl-redirect: "false" # we use `special` port to control ssl redirection
+              #   server-snippet: |
+              #     listen 2443;
+              #     if ( $server_port = 80 ) {
+              #       return 308 https://$host$request_uri;
+              #     }
+                
+                
